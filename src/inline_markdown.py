@@ -27,4 +27,46 @@ def extract_markdown_links(text):
     pattern = r"(?<!\!)\[(.*?)\]\((.*?)\)"
     return findall(pattern, text)
 
-        
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        extracted_img = extract_markdown_images(node.text)
+        if not extracted_img:
+            new_nodes.append(node)
+            continue
+        remaining_text = node.text
+        for img_alt, img_link in extracted_img:
+            markdown_str = f'![{img_alt}]({img_link})'
+            splited_node_img = remaining_text.split(markdown_str,1)
+            if splited_node_img[0] != "":
+                new_nodes.append(TextNode(splited_node_img[0], TextType.TEXT))
+            new_nodes.append(TextNode(img_alt, TextType.IMAGE, img_link))
+            remaining_text = splited_node_img[1]
+        if remaining_text != "":
+            new_nodes.append(TextNode(remaining_text,TextType.TEXT))
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        extracted_link = extract_markdown_links(node.text)
+        if not extracted_link:
+            new_nodes.append(node)
+            continue
+        remaining_text = node.text
+        for link_text, link_url in extracted_link:
+            markdown_str = f'[{link_text}]({link_url})'
+            splited_node_link = remaining_text.split(markdown_str,1)
+            if splited_node_link[0] != "":
+                new_nodes.append(TextNode(splited_node_link[0], TextType.TEXT))
+            new_nodes.append(TextNode(link_text, TextType.LINK, link_url))
+            remaining_text = splited_node_link[1]
+        if remaining_text != "":
+            new_nodes.append(TextNode(remaining_text,TextType.TEXT))
+    return new_nodes
