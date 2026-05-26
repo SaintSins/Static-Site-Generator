@@ -1,4 +1,7 @@
 from enum import Enum
+from htmlnode import ParentNode, LeafNode
+from inline_markdown import text_to_textnodes
+from textnode import text_node_to_html_node
 
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -55,4 +58,77 @@ def block_to_block_type(block):
         return BlockType.ORDERED_LIST
     
     return BlockType.PARAGRAPH
-        
+
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    html_nodes = []
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        match block_type:
+            case BlockType.PARAGRAPH:
+                html_nodes.append(text_to_paragraph_node(block))
+            case BlockType.HEADING:
+                html_nodes.append(text_to_heading_node(block))
+            case BlockType.CODE:
+                html_nodes.append(text_to_code_node(block))
+            case BlockType.QUOTE:
+                html_nodes.append(text_to_quote_node(block))
+            case BlockType.UNORDERED_LIST:
+                html_nodes.append(text_to_unlist_node(block))
+            case BlockType.ORDERED_LIST:
+                html_nodes.append(text_to_olist_node(block))
+            case _:
+                raise Exception("Invalid Block")
+    return ParentNode("div", html_nodes)
+ 
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    html_nodes = []
+    for text_node in text_nodes:
+        html_node = text_node_to_html_node(text_node)
+        html_nodes.append(html_node)
+    return html_nodes
+
+def text_to_paragraph_node(block):
+    child_nodes = text_to_children(block)
+    return ParentNode("p", child_nodes)
+
+def text_to_heading_node(block):
+    splited_block = block.split(" ",1)
+    level = len(splited_block[0])
+    if level < 1 or level > 6:
+        raise Exception("Invalid heading level.")
+    child_nodes = text_to_children(splited_block[1])
+    return ParentNode(f'h{level}', child_nodes)
+
+def text_to_unlist_node(block):
+    lines = block.split("\n")
+    list_items = []
+    for line in lines:
+        cleaned_text = line.split(" ",1)[1]
+        child_node = text_to_children(cleaned_text)
+        list_items.append(ParentNode("li", child_node))
+    return ParentNode("ul", list_items)
+
+def text_to_olist_node(block):
+    lines = block.split("\n")
+    list_items = []
+    for line in lines:
+        cleaned_text = line.split(" ",1)[1]
+        child_node = text_to_children(cleaned_text)
+        list_items.append(ParentNode("li", child_node))
+    return ParentNode("ol", list_items)
+
+def text_to_code_node(block):
+    cleaned_text = block.strip("`").strip()
+    code_node = LeafNode("code", cleaned_text)
+    return ParentNode("pre", [code_node])
+
+def text_to_quote_node(block):
+    lines = block.split("\n")
+    cleaned_str = []
+    for line in lines:
+        cleaned_text = line.lstrip(">").strip()
+        cleaned_str.append(cleaned_text)
+    child_node = text_to_children(" ".join(cleaned_str))
+    return ParentNode("blockquote", child_node)
