@@ -2,8 +2,7 @@ from src.markdown_blocks import markdown_to_html_node
 from src.markdown_blocks import extract_title
 import os
 
-basepath = "/"
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
     with open(from_path) as f:
@@ -25,15 +24,15 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as f:
         f.write(final_html)
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     dir_contents = os.listdir(dir_path_content)
     for content in dir_contents:
         content_path = os.path.join(dir_path_content,content)
         if not os.path.isfile(content_path):
-            generate_pages_recursive(content_path,template_path,os.path.join(dest_dir_path,content))
+            generate_pages_recursive(content_path,template_path,os.path.join(dest_dir_path,content), basepath)
         else:
             if content.endswith(".md"):
                 html_filename = content.replace(".md", ".html")
                 dest_file_path = os.path.join(dest_dir_path, html_filename)
-                generate_page(content_path, template_path, dest_file_path)
+                generate_page(content_path, template_path, dest_file_path, basepath)
 
