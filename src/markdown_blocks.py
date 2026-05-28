@@ -132,3 +132,10 @@ def text_to_quote_node(block):
         cleaned_str.append(cleaned_text)
     child_node = text_to_children(" ".join(cleaned_str))
     return ParentNode("blockquote", child_node)
+
+def extract_title(markdown):
+    lines = markdown.split("\n")
+    for line in lines:
+        if line.startswith("# "):
+            return line.strip("# ")
+    raise Exception("t]Title not found")

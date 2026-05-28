@@ -1,5 +1,5 @@
 import unittest
-from src.markdown_blocks import markdown_to_blocks, block_to_block_type, BlockType
+from src.markdown_blocks import markdown_to_blocks, block_to_block_type, BlockType, extract_title
 
 class TestMarkdownBlocks(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -93,6 +93,12 @@ class TestBlockToBlockType(unittest.TestCase):
 
         block = "1. First\n3. Third"
         self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+class ExtractTitle(unittest.TestCase):
+    def test_extract_title(self):
+        markdown = "# Hello\nSome paragraph"
+        self.assertEqual(extract_title(markdown), "Hello")
+
 
 if __name__ == "__main__":
     unittest.main()
