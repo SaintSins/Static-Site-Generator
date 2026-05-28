@@ -2,7 +2,7 @@ import os
 import shutil
 
 source = "static"
-dest = "public"
+dest = "docs"
 
 if os.path.exists(dest):
     shutil.rmtree(dest)

@@ -1,8 +1,12 @@
 from src.copystatic import copy_files_recursive
 from src.gencontent import generate_pages_recursive
+import sys
 
 def main():
-    copy_files_recursive("static","public")
-    generate_pages_recursive("content", "template.html", "public")
-
+    basepath = "/"
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+    copy_files_recursive("static","docs")
+    generate_pages_recursive("content", "template.html", "docs")
+    
 main()

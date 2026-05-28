@@ -2,6 +2,7 @@ from src.markdown_blocks import markdown_to_html_node
 from src.markdown_blocks import extract_title
 import os
 
+basepath = "/"
 def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
@@ -15,6 +16,8 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(markdown)
 
     final_html = html_template.replace("{{ Title }}", title).replace("{{ Content }}", html_content)
+    final_html = final_html.replace('href="/', f'href="{basepath}')
+    final_html = final_html.replace('src="/', f'src="{basepath}')
 
     dest_dir_path = os.path.dirname(dest_path)
     os.makedirs(dest_dir_path, exist_ok=True)
