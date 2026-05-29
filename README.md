@@ -17,12 +17,17 @@ Built as part of the backend development curriculum, this project specifically i
 ```text
 .
 ├── content/               # Source Markdown files (mirrored to output)
+├── docs/                  # Generated production site (for GitHub Pages)
 ├── static/                # Images, CSS, and other static assets
 ├── src/                   # Python source code
-│   ├── main.py            # Entry point and CLI argument handling
+├── main.py                # Entry point and CLI argument handling
 │   ├── gencontent.py      # Recursive page generation logic
 │   ├── copystatic.py      # Asset management logic
-│   └── markdown_blocks.py # Markdown to HTML conversion utilities
+│   ├── textnode.py        # TextNode inline element class and conversions
+│   ├── htmlnode.py        # Base HTMLNode, LeafNode, and ParentNode classes
+│   ├── inline_markdown.py # Splits, extractors, and parsers for inline text
+│   └── markdown_blocks.py # Block parsing, block-typing, and full document conversion
+├── tests/                 # Unit tests covering all files in the src directory
 ├── template.html          # Base HTML template
 ├── main.sh                # Script for local testing 
 └── build.sh               # Script for production build (GitHub Pages)
