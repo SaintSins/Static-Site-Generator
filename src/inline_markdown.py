@@ -11,12 +11,12 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         if len(splited_node)%2 == 0: #Length of the splitted node will be in odd number if closing delimeter is present
             raise Exception("Invalid markdown, formatted section not closed.")
         for i, part in enumerate(splited_node):
-            if part == "":
-                continue
             if i % 2 == 0:
-                new_nodes.append(TextNode(part, TextType.TEXT))
+                if part != "":
+                    new_nodes.append(TextNode(part, TextType.TEXT))
             else:
-                new_nodes.append(TextNode(part, text_type))
+                if part != "":
+                    new_nodes.append(TextNode(part, text_type))
     return new_nodes
 
 def extract_markdown_images(text):
@@ -76,6 +76,7 @@ def text_to_textnodes(text):
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "__", TextType.BOLD)
     nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
