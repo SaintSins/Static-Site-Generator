@@ -1,7 +1,8 @@
 from enum import Enum
-from src.htmlnode import ParentNode, LeafNode
+from src.htmlnode import ParentNode, LeafNode, HTMLNode
 from src.inline_markdown import text_to_textnodes
 from src.textnode import text_node_to_html_node
+from typing import List
 
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -11,7 +12,7 @@ class BlockType(Enum):
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered_list"
     
-def markdown_to_blocks(markdown):
+def markdown_to_blocks(markdown: str) -> List[str]:
     raw_blocks = markdown.split('\n\n')
     cleaned_blocks = []
     for block in raw_blocks:
@@ -21,7 +22,7 @@ def markdown_to_blocks(markdown):
         cleaned_blocks.append(stripped_block)
     return cleaned_blocks
 
-def block_to_block_type(block):
+def block_to_block_type(block: str) -> BlockType:
     lines = block.split("\n")
 
     if block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
@@ -59,7 +60,7 @@ def block_to_block_type(block):
     
     return BlockType.PARAGRAPH
 
-def markdown_to_html_node(markdown):
+def markdown_to_html_node(markdown: str) -> ParentNode:
     blocks = markdown_to_blocks(markdown)
     html_nodes = []
     for block in blocks:
@@ -81,7 +82,7 @@ def markdown_to_html_node(markdown):
                 raise Exception("Invalid Block")
     return ParentNode("div", html_nodes)
  
-def text_to_children(text):
+def text_to_children(text: str) -> List[HTMLNode]:
     text_nodes = text_to_textnodes(text)
     html_nodes = []
     for text_node in text_nodes:
@@ -89,11 +90,11 @@ def text_to_children(text):
         html_nodes.append(html_node)
     return html_nodes
 
-def text_to_paragraph_node(block):
+def text_to_paragraph_node(block: str) -> ParentNode:
     child_nodes = text_to_children(block)
     return ParentNode("p", child_nodes)
 
-def text_to_heading_node(block):
+def text_to_heading_node(block: str) -> ParentNode:
     splited_block = block.split(" ",1)
     level = len(splited_block[0])
     if level < 1 or level > 6:
@@ -101,7 +102,7 @@ def text_to_heading_node(block):
     child_nodes = text_to_children(splited_block[1])
     return ParentNode(f'h{level}', child_nodes)
 
-def text_to_unlist_node(block):
+def text_to_unlist_node(block: str) -> ParentNode:
     lines = block.split("\n")
     list_items = []
     for line in lines:
@@ -110,7 +111,7 @@ def text_to_unlist_node(block):
         list_items.append(ParentNode("li", child_node))
     return ParentNode("ul", list_items)
 
-def text_to_olist_node(block):
+def text_to_olist_node(block: str) -> ParentNode:
     lines = block.split("\n")
     list_items = []
     for line in lines:
@@ -119,12 +120,12 @@ def text_to_olist_node(block):
         list_items.append(ParentNode("li", child_node))
     return ParentNode("ol", list_items)
 
-def text_to_code_node(block):
+def text_to_code_node(block: str) -> ParentNode:
     cleaned_text = block.strip("`").strip()
     code_node = LeafNode("code", cleaned_text)
     return ParentNode("pre", [code_node])
 
-def text_to_quote_node(block):
+def text_to_quote_node(block: str) -> ParentNode:
     lines = block.split("\n")
     cleaned_str = []
     for line in lines:
@@ -133,9 +134,9 @@ def text_to_quote_node(block):
     child_node = text_to_children(" ".join(cleaned_str))
     return ParentNode("blockquote", child_node)
 
-def extract_title(markdown):
+def extract_title(markdown: str) -> str:
     lines = markdown.split("\n")
     for line in lines:
         if line.startswith("# "):
             return line.strip("# ")
-    raise Exception("t]Title not found")
+    raise Exception("Title not found")

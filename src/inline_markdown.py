@@ -1,7 +1,8 @@
 from src.textnode import TextNode, TextType
 from re import findall
+from typing import List, Tuple
 
-def split_nodes_delimiter(old_nodes, delimiter, text_type):
+def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: TextType) -> List[TextNode]:
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.TEXT:
@@ -19,15 +20,15 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     new_nodes.append(TextNode(part, text_type))
     return new_nodes
 
-def extract_markdown_images(text):
+def extract_markdown_images(text: str) -> List[Tuple[str,str]]:
     pattern = r"!\[(.*?)\]\((.*?)\)"
     return findall(pattern, text)
 
-def extract_markdown_links(text):
+def extract_markdown_links(text: str) -> List[Tuple[str,str]]:
     pattern = r"(?<!\!)\[(.*?)\]\((.*?)\)"
     return findall(pattern, text)
 
-def split_nodes_image(old_nodes):
+def split_nodes_image(old_nodes: List[TextNode]) -> List[TextNode]:
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.TEXT:
@@ -49,7 +50,7 @@ def split_nodes_image(old_nodes):
             new_nodes.append(TextNode(remaining_text,TextType.TEXT))
     return new_nodes
 
-def split_nodes_link(old_nodes):
+def split_nodes_link(old_nodes: List[TextNode]) -> List[TextNode]:
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.TEXT:
@@ -71,7 +72,7 @@ def split_nodes_link(old_nodes):
             new_nodes.append(TextNode(remaining_text,TextType.TEXT))
     return new_nodes
 
-def text_to_textnodes(text):
+def text_to_textnodes(text: str) -> List[TextNode]:
     nodes = [TextNode(text, TextType.TEXT)]
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
