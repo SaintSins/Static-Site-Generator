@@ -2,7 +2,7 @@ from src.copystatic import copy_files_recursive
 from src.gencontent import generate_pages_recursive
 import sys
 
-def main():
+def main() -> None:
     basepath = "/"
     if len(sys.argv) > 1:
         basepath = sys.argv[1]

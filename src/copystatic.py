@@ -7,7 +7,7 @@ dest = "docs"
 if os.path.exists(dest):
     shutil.rmtree(dest)
 
-def copy_files_recursive(source, dest):
+def copy_files_recursive(source: str, dest: str) -> None:
     if not os.path.exists(dest):
         os.mkdir(dest)
     source_contents = os.listdir(source)
