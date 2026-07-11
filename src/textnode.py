@@ -40,8 +40,12 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         case TextType.CODE:
             return LeafNode(text_node.text, "code")
         case TextType.LINK:
+            if text_node.url is None:
+                raise ValueError("Invalid markdown: link node must have a URL")
             return LeafNode(text_node.text, "a", {"href": text_node.url})
         case TextType.IMAGE:
+            if text_node.url is None:
+                raise ValueError("Invalid markdown: link node must have a URL")
             return LeafNode("", "img", {"src": text_node.url, "alt": text_node.text})
         case _:
             raise Exception(f"Invalid text type: {text_node.text_type}")
