@@ -1,6 +1,7 @@
 from src.textnode import TextNode, TextType
 from re import findall
 from typing import List, Tuple
+from src.escape_handlers import hide_escape_chars, restore_chars, escape_map
 
 def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: TextType) -> List[TextNode]:
     new_nodes = []
@@ -73,7 +74,8 @@ def split_nodes_link(old_nodes: List[TextNode]) -> List[TextNode]:
     return new_nodes
 
 def text_to_textnodes(text: str) -> List[TextNode]:
-    nodes = [TextNode(text, TextType.TEXT)]
+    safe_text = hide_escape_chars(text,escape_map)
+    nodes = [TextNode(safe_text, TextType.TEXT)]
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
@@ -81,4 +83,4 @@ def text_to_textnodes(text: str) -> List[TextNode]:
     nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
-    return nodes
+    return restore_chars(nodes,escape_map)

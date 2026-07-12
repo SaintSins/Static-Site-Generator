@@ -41,7 +41,7 @@ def block_to_block_type(block: str) -> BlockType:
     
     is_unordered = True
     for line in lines:
-        if not line.startswith("- "):
+        if not line.startswith(("- ", "* ")):
             is_unordered = False
             break
     if is_unordered:

@@ -1,5 +1,5 @@
 import unittest
-from src.markdown_blocks import markdown_to_blocks, block_to_block_type, BlockType, extract_title
+from src.markdown_blocks import markdown_to_blocks, block_to_block_type, BlockType, extract_title, markdown_to_html_node
 
 class TestMarkdownBlocks(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -41,7 +41,7 @@ This is another paragraph.
             ],
         )
 
-    def test_markdown_to_blocks(self):
+    def test_markdown_to_blocks_mixed_formatting(self):
         md = """
 This is **bolded** paragraph
 
@@ -99,6 +99,23 @@ class ExtractTitle(unittest.TestCase):
         markdown = "# Hello\nSome paragraph"
         self.assertEqual(extract_title(markdown), "Hello")
 
+class TestFullMarkdownToHTML(unittest.TestCase):
+    def test_full_document_with_escapes(self) -> None:
+        md = r"""
+
+# Escaped \*Heading\*
+
+Here is a paragraph with **bold** text and an \_escaped underscore\_.
+
+- This is a list
+* With a literal \. dot
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        
+        self.assertIn("<h1>Escaped *Heading*</h1>", html)
+        self.assertIn("<p>Here is a paragraph with <b>bold</b> text and an _escaped underscore_.</p>", html)
+        self.assertIn("<li>With a literal . dot</li>", html)
 
 if __name__ == "__main__":
     unittest.main()

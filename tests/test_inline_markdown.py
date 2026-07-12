@@ -346,3 +346,26 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             nodes,
         )
+    
+    def test_text_to_textnodes_escape_integration(self) -> None:
+        text = "This is **bold** and an \\*escaped\\* asterisk."
+        
+        nodes = text_to_textnodes(text)
+        
+        self.assertEqual(len(nodes), 3)
+        self.assertEqual(nodes[0].text, "This is ")
+        self.assertEqual(nodes[0].text_type, TextType.TEXT)
+        self.assertEqual(nodes[1].text, "bold")
+        self.assertEqual(nodes[1].text_type, TextType.BOLD)
+        self.assertEqual(nodes[2].text, " and an *escaped* asterisk.")
+        self.assertEqual(nodes[2].text_type, TextType.TEXT)
+
+    def test_text_to_textnodes_escape_prevents_formatting(self) -> None:
+
+        text = "Show a literal \\_underscore\\_ here."
+
+        nodes = text_to_textnodes(text)
+        
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].text, "Show a literal _underscore_ here.")
+        self.assertEqual(nodes[0].text_type, TextType.TEXT)
